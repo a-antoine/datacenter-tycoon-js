@@ -1,0 +1,19 @@
+{
+  "name": "datacenter-tycoon-js",
+  "version": "0.0.1",
+  "description": "DataCenter Tycoon JS Edition",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a-antoine/datacenter-tycoon-js.git"
+  },
+  "author": "a-antoine",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/a-antoine/datacenter-tycoon-js/issues"
+  },
+  "homepage": "https://github.com/a-antoine/datacenter-tycoon-js#readme"
+}
