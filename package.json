@@ -4,6 +4,8 @@
   "description": "DataCenter Tycoon JS Edition",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,14 @@
   "bugs": {
     "url": "https://github.com/a-antoine/datacenter-tycoon-js/issues"
   },
-  "homepage": "https://github.com/a-antoine/datacenter-tycoon-js#readme"
+  "homepage": "https://github.com/a-antoine/datacenter-tycoon-js#readme",
+  "devDependencies": {
+    "@types/node": "^7.0.5",
+    "nodemon": "^1.11.0",
+    "ts-node": "^2.1.0",
+    "typescript": "^2.1.6"
+  },
+  "dependencies": {
+    "express": "^4.14.1"
+  }
 }
