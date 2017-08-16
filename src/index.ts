@@ -1,22 +1,42 @@
-let express = require('express');
-let app = express();
+require('dotenv').config();
 
-let UserDao = require('./model/User');
+import * as cluster from 'cluster';
 
-app.get('/', function (req, res) {
-    res.send('Hello World!');
-});
+import * as express from 'express';
+import * as morgan from 'morgan';
+import * as bodyParser from 'body-parser';
 
-app.get('/users', function (req, res) {
-    UserDao.fetchAll().then(function(users) {
-        console.log(JSON.stringify(users));
-        res.send(users);
-    }).catch(function(err) {
-        console.error(err);
-        res.status(500).send('An error happened!');
-    });
-});
+if (cluster.isMaster) {
 
-app.listen(3000, function () {
-    console.log('Listening on port 3000');
-});
+	// Count the machine's CPUs
+	let cpuCount = require('os').cpus().length;
+
+	// Create a worker for each CPU
+	for (let i = 0; i < cpuCount; i++) {
+		cluster.fork();
+	}
+
+} else {
+
+	const app = express();
+
+	app.use(morgan('dev'));
+
+	app.use(bodyParser.urlencoded({extended: true}));
+	app.use(bodyParser.json());
+
+	let apiRouter = express.Router();
+
+	require('./routes')(apiRouter);
+
+	app.use('/api', apiRouter);
+
+	cluster.on('exit', function(worker, code, signal) {
+		console.log('Worker %d died with code/signal %s. Restarting worker...', worker.process.pid, signal || code);
+		cluster.fork();
+	});
+
+	app.listen(3000, function () {
+		console.log('Worker ' + cluster.worker.id + ' started');
+	});
+}
