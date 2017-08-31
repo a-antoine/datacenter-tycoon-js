@@ -12,10 +12,10 @@ router.get('/login', async function (req: Request, res: Response) {
 	try {
 		const player = await playerDao.findOne({where: {username: req.body.username}});
 		if (!player) {
-			res.status(404).send({success: false, msg: 'Authentication failed. User not found.'});
+			res.status(404).send({success: false, message: 'Authentication failed. User not found.'});
 		} else {
 			if (!player.validPassword(req.body.password)) {
-				res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
+				res.status(401).send({success: false, message: 'Authentication failed. Wrong password.'});
 			} else {
 				res.json({
 					username: player.username,
@@ -26,7 +26,7 @@ router.get('/login', async function (req: Request, res: Response) {
 		}
 	} catch (error) {
 		console.error(error.message);
-		res.status(500).send('Error: ' + error.message);
+		res.status(500).send({success: false, message: 'Error: ' + error.message});
 	}
 });
 
@@ -40,28 +40,28 @@ router.post('/signup', async function (req: Request, res: Response) {
 
 		// 1: Check the email format
 		if (!validator.isEmail(email)) {
-			res.status(400).send('Error: email "' + email + '" is invalid.');
+			res.status(400).send({success: false, message: 'Email "' + email + '" is invalid.'});
 			return;
 		}
 
 		// 2: Check if username isn't already taken.
 		const potentiallyExistingUsername = await playerDao.findOne({where: {username}});
 		if (potentiallyExistingUsername) {
-			res.status(409).send('Error: username "' + username + '" is already used.');
+			res.status(409).send({success: false, message: 'Username "' + username + '" is already used.'});
 			return;
 		}
 
 		// 3: Check if email isn't already taken.
 		const potentiallyExistingEmail = await playerDao.findOne({where: {email}});
 		if (potentiallyExistingEmail) {
-			res.status(409).send('Error: email "' + email + '" is already used.');
+			res.status(409).send({success: false, message: 'Email "' + email + '" is already used.'});
 			return;
 		}
 
 		// 4: Check if company name isn't already taken
 		const potentiallyExistingCompanyName = await playerDao.findOne({where: {companyName}});
 		if (potentiallyExistingCompanyName) {
-			res.status(409).send('Error: company name "' + companyName + '" is already used.');
+			res.status(409).send({success: false, message: 'Company name "' + companyName + '" is already used.'});
 			return;
 		}
 
@@ -78,14 +78,14 @@ router.post('/signup', async function (req: Request, res: Response) {
 				password: newPlayer.generateHash(password)
 			});
 
-			res.send('Player created successfully');
+			res.send({success: true, message: 'Player created successfully'});
 		}
 		catch (error) {
 			console.error(error.message);
-			res.status(500).send('Error: ' + error.message);
+			res.status(500).send({success: false, message: 'Error: ' + error.message});
 		}
 	} else {
-		res.status(400).send('Error: missing parameters');
+		res.status(400).send({success: false, message: 'Missing parameters'});
 	}
 });
 
