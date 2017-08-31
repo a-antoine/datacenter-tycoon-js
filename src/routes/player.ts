@@ -1,20 +1,21 @@
 import { Router, Request, Response } from 'express';
+import * as validator from 'validator';
 
-let jwt = require('jsonwebtoken');
-let authenticationMiddleware = require('../authentication/middleware');
+const jwt = require('jsonwebtoken');
+const authenticationMiddleware = require('../authentication/middleware');
 
-let playerDao = require('../models').Player;
+const playerDao = require('../models').Player;
 
-let router = Router();
+const router = Router();
 
-router.post('/login', async function (req: Request, res: Response) {
+router.get('/login', async function (req: Request, res: Response) {
 	try {
-		let player = await playerDao.findOne({where: {username: req.body.username}});
+		const player = await playerDao.findOne({where: {username: req.body.username}});
 		if (!player) {
-			res.send({success: false, msg: 'Authentication failed. User not found.'});
+			res.status(404).send({success: false, msg: 'Authentication failed. User not found.'});
 		} else {
 			if (!player.validPassword(req.body.password)) {
-				res.send({success: false, msg: 'Authentication failed. Wrong password.'});
+				res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
 			} else {
 				res.json({
 					username: player.username,
@@ -29,27 +30,80 @@ router.post('/login', async function (req: Request, res: Response) {
 	}
 });
 
+router.post('/signup', async function (req: Request, res: Response) {
+	const username = req.body.username;
+	const password = req.body.password;
+	const email = req.body.email;
+	const companyName = req.body.companyName;
+
+	if (username && password && email && companyName) {
+
+		// 1: Check the email format
+		if (!validator.isEmail(email)) {
+			res.status(400).send('Error: email "' + email + '" is invalid.');
+			return;
+		}
+
+		// 2: Check if username isn't already taken.
+		const potentiallyExistingUsername = await playerDao.findOne({where: {username}});
+		if (potentiallyExistingUsername) {
+			res.status(409).send('Error: username "' + username + '" is already used.');
+			return;
+		}
+
+		// 3: Check if email isn't already taken.
+		const potentiallyExistingEmail = await playerDao.findOne({where: {email}});
+		if (potentiallyExistingEmail) {
+			res.status(409).send('Error: email "' + email + '" is already used.');
+			return;
+		}
+
+		// 4: Check if company name isn't already taken
+		const potentiallyExistingCompanyName = await playerDao.findOne({where: {companyName}});
+		if (potentiallyExistingCompanyName) {
+			res.status(409).send('Error: company name "' + companyName + '" is already used.');
+			return;
+		}
+
+		try {
+			const newPlayer = await playerDao.create({
+				role: 'PLAYER',
+				username,
+				password: '',
+				email,
+				companyName,
+				balance: 1000
+			});
+			newPlayer.update({
+				password: newPlayer.generateHash(password)
+			});
+
+			res.send('Player created successfully');
+		}
+		catch (error) {
+			console.error(error.message);
+			res.status(500).send('Error: ' + error.message);
+		}
+	} else {
+		res.status(400).send('Error: missing parameters');
+	}
+});
+
+
 router.get('/', authenticationMiddleware('ADMIN'), async function (req: Request, res: Response) {
-	let allPlayers = await playerDao.findAll();
+	const allPlayers = await playerDao.findAll();
 	res.send(allPlayers);
 });
 
-router.get('/:id', authenticationMiddleware('ADMIN'), async function (req: Request, res: Response) {
-	let player = await playerDao.findOne({where: {id: req.params.id}});
+router.get('/:id(\\d+)/', authenticationMiddleware('ADMIN'), async function (req: Request, res: Response) {
+	const player = await playerDao.findOne({where: {id: req.params.id}});
 	res.send(player);
 });
 
 router.get('/me', authenticationMiddleware('PLAYER'), async function (req: any, res: Response) {
-	let player = await playerDao.findOne({where: {id: req.tokenData.id}});
+	const player = await playerDao.findOne({where: {id: req.tokenData.id}});
 	res.send(player);
 });
 
-router.post('/', async function (req: Request, res: Response) {
-
-});
-
-router.put('/:id', async function (req: Request, res: Response) {
-
-});
 
 export = router;

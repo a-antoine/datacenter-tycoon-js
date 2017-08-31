@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser';
 if (cluster.isMaster) {
 
 	// Count the machine's CPUs
-	let cpuCount = require('os').cpus().length;
+	const cpuCount = require('os').cpus().length;
 
 	// Create a worker for each CPU
 	for (let i = 0; i < cpuCount; i++) {
@@ -25,7 +25,7 @@ if (cluster.isMaster) {
 	app.use(bodyParser.urlencoded({extended: true}));
 	app.use(bodyParser.json());
 
-	let apiRouter = express.Router();
+	const apiRouter = express.Router();
 
 	require('./routes')(apiRouter);
 

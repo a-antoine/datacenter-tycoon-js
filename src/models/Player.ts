@@ -3,45 +3,45 @@ let bcrypt = require('bcrypt');
 module.exports = function(queryInterface: any, Sequelize: any) {
 	const Player = queryInterface.define('Player', {
 		id: {
-			field: "id",
+			field: 'id',
 			type: Sequelize.INTEGER,
 			primaryKey: true,
 			autoIncrement: true
 		},
 		role: {
-			field: "role",
+			field: 'role',
 			type: Sequelize.ENUM('PLAYER', 'ADMIN')
 		},
 		username: {
-			field: "username",
+			field: 'username',
 			type: Sequelize.STRING(45)
 		},
 		password: {
-			field: "password",
+			field: 'password',
 			type: Sequelize.STRING
 		},
 		email: {
-			email: "email",
+			email: 'email',
 			type: Sequelize.STRING
 		},
 		companyName: {
-			field: "company_name",
+			field: 'company_name',
 			type: Sequelize.STRING(45)
 		},
 		balance: {
-			field: "balance",
+			field: 'balance',
 			type: Sequelize.DECIMAL(18, 2)
 		},
 		createdAt: {
-			field: "created_at",
+			field: 'created_at',
 			type: Sequelize.DATE
 		},
 		updatedAt: {
-			field: "updated_at",
+			field: 'updated_at',
 			type: Sequelize.DATE
 		}
 	}, {
-		tableName: "player"
+		tableName: 'player'
 	});
 
 	Player.prototype.generateHash = function (password: string) {

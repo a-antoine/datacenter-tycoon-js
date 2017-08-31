@@ -1,16 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 
-let jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 export = function (role: string) {
 	return function (req: any, res: Response, next: NextFunction) {
 
-		let token = req.headers['x-access-token'];
+		const token = req.headers['x-access-token'];
 
 		if (token) {
 
 			try {
-				let tokenData = jwt.verify(token, process.env.JWT_SECRET);
+				const tokenData = jwt.verify(token, process.env.JWT_SECRET);
 				if ((role === 'PLAYER' && (tokenData.role === 'PLAYER' || tokenData.role === 'ADMIN')) ||
 					(role === 'ADMIN' && tokenData.role === 'ADMIN')) {
 
@@ -31,5 +31,5 @@ export = function (role: string) {
 
 			return res.status(403).send({success: false, message: 'No token provided.'});
 		}
-	}
-}
+	};
+};
