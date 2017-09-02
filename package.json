@@ -1,7 +1,7 @@
 {
-  "name": "datacenter-tycoon-js",
+  "name": "dctycoon-js-backend",
   "version": "0.0.1",
-  "description": "DataCenter Tycoon JS Edition",
+  "description": "DataCenter Tycoon JS Edition - Back End",
   "main": "index.js",
   "scripts": {
     "start": "nodemon dist/index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/a-antoine/datacenter-tycoon-js.git"
+    "url": "git+https://github.com/a-antoine/dctycoon-js-backend.git"
   },
   "author": "a-antoine",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/a-antoine/datacenter-tycoon-js/issues"
+    "url": "https://github.com/a-antoine/dctycoon-js-backend/issues"
   },
-  "homepage": "https://github.com/a-antoine/datacenter-tycoon-js#readme",
+  "homepage": "https://github.com/a-antoine/dctycoon-js-backend#readme",
   "devDependencies": {
     "@types/body-parser": "^1.16.4",
     "@types/express": "^4.0.36",
