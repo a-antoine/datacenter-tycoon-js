@@ -8,7 +8,7 @@ const playerDao = require('../models').Player;
 
 const router = Router();
 
-router.get('/login', async function (req: Request, res: Response) {
+router.post('/login', async function (req: Request, res: Response) {
 	try {
 		const player = await playerDao.findOne({where: {username: req.body.username}});
 		if (!player) {
@@ -101,7 +101,10 @@ router.get('/:id(\\d+)/', authenticationMiddleware('ADMIN'), async function (req
 });
 
 router.get('/me', authenticationMiddleware('PLAYER'), async function (req: any, res: Response) {
-	const player = await playerDao.findOne({where: {id: req.tokenData.id}});
+	const player = await playerDao.findOne({
+		attributes: ['username', 'email', 'companyName', 'balance'],
+		where: {id: req.tokenData.id}
+	});
 	res.send(player);
 });
 
